@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<title>丟垃圾問答小遊戲 - 第二關</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f0f8ff;
+  }
+  #game-container {
+    background: white;
+    padding: 25px 35px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    max-width: 480px;
+    width: 90vw;
+    text-align: center;
+  }
+  #score {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  .question {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  .answers button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 14px;
+    width: 100%;
+    max-width: 400px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    border: 1.5px solid #0078d4;
+    background-color: #e7f0fd;
+    transition: background-color 0.3s;
+  }
+  .answers button:hover:not(:disabled) {
+    background-color: #c3d9f9;
+  }
+  .answers button:disabled {
+    background-color: #b0bec5;
+    cursor: not-allowed;
+  }
+  #feedback {
+    color: #d32f2f;
+    margin-top: 12px;
+    min-height: 24px;
+    font-weight: 600;
+  }
+  #retry-btn {
+    margin-top: 15px;
+    padding: 10px 16px;
+    font-weight: bold;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 2px solid #d32f2f;
+    background-color: #ffebee;
+    color: #d32f2f;
+    cursor: pointer;
+    display: none;
+  }
+  #retry-btn:hover {
+    background-color: #ffcdd2;
+  }
+  #next-level-btn {
+    margin-top: 20px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: none;
+  }
+  #next-level-btn:hover {
+    background-color: #43a047;
+  }
+</style>
+</head>
+<body>
+
+<div id="game-container">
+  <div id="score">分數: 0</div>
+  <div id="question" class="question"></div>
+  <div id="answers" class="answers"></div>
+  <div id="feedback"></div>
+  <button id="retry-btn">重試</button>
+  <button id="next-level-btn">前往下一關</button>
+</div>
+
+<script>
+const originalQuestions = [
+  {
+    question: "若看到有人亂丟垃圾怎麼做？",
+    correct: "制止那個人的行為，並請他好好丟垃圾",
+    wrong: [
+      "跟他一起亂丟垃圾",
+      "把垃圾踢走，不管去哪裡都好",
+      "拿走垃圾放自己包包裡"
+    ]
+  },
+  {
+    question: "在路上看到垃圾該...?",
+    correct: "撿起來丟進附近的垃圾桶",
+    wrong: [
+      "視而不見，反正不是自己的事",
+      "用腳踩碎垃圾，讓它看起來不明顯",
+      "把垃圾丟到旁邊的水溝裡"
+    ]
+  },
+  {
+    question: "若有人把垃圾丟錯分類該?",
+    correct: "禮貌提醒他正確的分類方式",
+    wrong: [
+      "不理會，反正垃圾都會被收走",
+      "把垃圾拿回家，自己再丟一次",
+      "大聲斥責他，讓他很難堪"
+    ]
+  },
+  {
+    question: "有人問你怎麼做分類，你該...?",
+    correct: "詳細說明垃圾分類的種類和方法",
+    wrong: [
+      "隨便說一說，反正沒人在意",
+      "告訴他全部垃圾都丟一般垃圾就好",
+      "回答不出來，乾脆不理他"
+    ]
+  },
+  {
+    question: "看到有人丟垃圾，但寶特瓶裡面還有剩餘的汁水，你該...?",
+    correct: "提醒他先把瓶子裡的汁水倒掉，再丟進回收桶",
+    wrong: [
+      "直接丟垃圾桶，反正垃圾就是垃圾",
+      "把寶特瓶扔到路邊，汁水會自己流掉",
+      "把寶特瓶拿走，放到別人垃圾裡"
+    ]
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let retrying = false;
+let questions = [];
+
+const scoreEl = document.getElementById("score");
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const feedbackEl = document.getElementById("feedback");
+const retryBtn = document.getElementById("retry-btn");
+const nextBtn = document.getElementById("next-level-btn");
+
+function shuffleArray(array) {
+  return [...array].sort(() => Math.random() - 0.5);
+}
+
+function prepareQuestions() {
+  questions = originalQuestions.map(q => {
+    const allAnswers = shuffleArray([...q.wrong, q.correct]);
+    return {
+      question: q.question,
+      answers: allAnswers,
+      correctIndex: allAnswers.indexOf(q.correct)
+    };
+  });
+}
+
+function updateScore() {
+  scoreEl.textContent = `分數: ${score}`;
+}
+
+function showQuestion() {
+  feedbackEl.textContent = "";
+  retryBtn.style.display = "none";
+  nextBtn.style.display = "none";
+  updateScore();
+
+  const q = questions[currentQuestion];
+  questionEl.textContent = `問題${currentQuestion + 1}: ${q.question}`;
+  answersEl.innerHTML = "";
+
+  q.answers.forEach((answer, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = answer;
+    btn.onclick = () => checkAnswer(i);
+    btn.disabled = retrying;
+    answersEl.appendChild(btn);
+  });
+}
+
+function checkAnswer(selectedIndex) {
+  const q = questions[currentQuestion];
+  if (selectedIndex === q.correctIndex) {
+    if (!retrying) {
+      score += 2;
+      updateScore();
+    }
+    retrying = false;
+    currentQuestion++;
+    if (currentQuestion < questions.length) {
+      showQuestion();
+    } else {
+      endGame();
+    }
+  } else {
+    if (!retrying) {
+      feedbackEl.textContent = `答錯了，正確答案是：${q.answers[q.correctIndex]}`;
+      retrying = true;
+      retryBtn.style.display = "inline-block";
+      Array.from(answersEl.children).forEach(btn => btn.disabled = true);
+    }
+  }
+}
+
+retryBtn.addEventListener("click", () => {
+  retrying = false;
+  feedbackEl.textContent = "";
+  retryBtn.style.display = "none";
+  showQuestion();
+});
+
+nextBtn.addEventListener("click", () => {
+  // ✅ 這裡是跳轉到第三關的關鍵
+  window.location.href = "level3.html";
+});
+
+function endGame() {
+  alert("恭喜你回答完畢！");
+  if (score === questions.length * 2) {
+    feedbackEl.textContent = "回答皆正確，好棒!";
+    nextBtn.style.display = "inline-block";
+  } else {
+    feedbackEl.textContent = "回答有錯誤，但沒關係，相信你已經知道了該如何做了~";
+    if (confirm("要再挑戰一次嗎？")) {
+      currentQuestion = 0;
+      score = 0;
+      retrying = false;
+      prepareQuestions();
+      showQuestion();
+    } else {
+      questionEl.textContent = "遊戲結束，謝謝遊玩！";
+      answersEl.innerHTML = "";
+      retryBtn.style.display = "none";
+    }
+  }
+}
+
+prepareQuestions();
+showQuestion();
+</script>
+
+</body>
+</html>

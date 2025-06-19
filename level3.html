@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>性別平等問答挑戰</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #ffffff, #a0d8ef);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .quiz-card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      padding: 2rem;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      animation: fadeIn 0.4s ease;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background-color: #eee;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #3b82f6;
+      transition: width 0.4s ease;
+    }
+
+    .question {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      padding: 0.8rem 1.2rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      background-color: #f0f0f0;
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #dcdcdc;
+    }
+
+    .btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .feedback {
+      font-weight: bold;
+      margin-top: 1rem;
+      min-height: 1.5rem;
+    }
+
+    .score-box {
+      font-size: 1rem;
+      color: #444;
+      margin-top: 1rem;
+    }
+
+    #next-level-btn {
+      margin-top: 1.5rem;
+      background-color: #3b82f6;
+      color: white;
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-card">
+    <h1>性別平等問答挑戰</h1>
+    <div class="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+    <div class="question" id="question">題目載入中...</div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="score-box" id="score">目前分數：0</div>
+    <button id="next-level-btn" class="btn">前往下一關 ➡️</button>
+  </div>
+
+  <script>
+    alert("關於性別議題你知道多少呢？讓我們來看看吧！");
+
+    const questions = [
+      {
+        question: "女生適合學理工嗎？",
+        options: [
+          { text: "當然可以，能力與興趣無關性別。", correct: true },
+          { text: "女生比較感性，不適合理工。", correct: false },
+          { text: "理工科是男生的專長。", correct: false }
+        ],
+        explain: "能力與興趣不是由性別決定，理工領域男女皆可擅長。"
+      },
+      {
+        question: "男生可以從事幼教工作嗎？",
+        options: [
+          { text: "可以，照顧小孩不分性別。", correct: true },
+          { text: "幼教工作只有女生適合。", correct: false },
+          { text: "男生當幼師會很奇怪。", correct: false }
+        ],
+        explain: "男性幼教老師在許多國家都受到重視，是性別平等的一部分。"
+      },
+      {
+        question: "女性在職場上是否應與男性享有同樣升遷機會？",
+        options: [
+          { text: "是，升遷應以能力為主。", correct: true },
+          { text: "女生會生小孩不適合升遷。", correct: false },
+          { text: "男生比較能領導團隊。", correct: false }
+        ],
+        explain: "性別不應成為升遷門檻，公平是工作環境的基礎。"
+      },
+      {
+        question: "男生可以穿粉紅色衣服嗎？",
+        options: [
+          { text: "當然可以，顏色沒有性別。", correct: true },
+          { text: "粉紅色是女生專用的顏色。", correct: false },
+          { text: "男生穿粉紅色很娘。", correct: false }
+        ],
+        explain: "顏色是文化偏見造成的刻板印象，每個人都有穿衣自由。"
+      },
+      {
+        question: "性別平等對社會有什麼影響？",
+        options: [
+          { text: "有助於創造更公平、更有機會的社會。", correct: true },
+          { text: "只是女生想爭取特權。", correct: false },
+          { text: "其實已經沒有性別問題了。", correct: false }
+        ],
+        explain: "性別平等能提升整體社會福祉、創造更多機會。"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function shuffleArray(array) {
+      return array
+        .map(item => ({ item, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ item }) => item);
+    }
+
+    function loadQuestion() {
+      const card = document.querySelector('.quiz-card');
+      card.classList.remove('fade-in');
+      void card.offsetWidth;
+      card.classList.add('fade-in');
+
+      const q = questions[current];
+      document.getElementById('question').textContent = q.question;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = "";
+      document.getElementById('feedback').textContent = "";
+
+      const shuffledOptions = shuffleArray(q.options);
+
+      shuffledOptions.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = option.text;
+        btn.onclick = () => handleAnswer(option.correct, q.explain);
+        optionsDiv.appendChild(btn);
+      });
+
+      document.getElementById('progress-bar').style.width =
+        ((current) / questions.length) * 100 + "%";
+    }
+
+    function handleAnswer(isCorrect, explanation) {
+      const feedback = document.getElementById('feedback');
+      if (isCorrect) {
+        score += 2;
+        feedback.textContent = "✅ 答對了！ " + explanation;
+        feedback.style.color = "#10b981";
+      } else {
+        feedback.textContent = "❌ 答錯了。 " + explanation;
+        feedback.style.color = "#ef4444";
+      }
+
+      // ✅ 只 disable 選項按鈕，不會影響下一關按鈕
+      document.querySelectorAll('#options .btn').forEach(btn => btn.disabled = true);
+      document.getElementById('score').textContent = `目前分數：${score}`;
+
+      setTimeout(() => {
+        current++;
+        if (current < questions.length) {
+          loadQuestion();
+        } else {
+          document.getElementById('feedback').textContent =
+            "🎉 相信你更多的了解性別議題了！恭喜你完成回答！";
+          document.getElementById('next-level-btn').style.display = "inline-block";
+          document.getElementById('next-level-btn').disabled = false;
+        }
+      }, 2500);
+    }
+
+    document.getElementById('next-level-btn').onclick = function () {
+      window.location.href = "level4.html";
+    };
+
+    loadQuestion();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>環保小勇士</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    #scoreBoard {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(255,255,255,0.8);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 20px;
+      z-index: 2;
+    }
+    .trash {
+      width: 80px;
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .trash:hover {
+      transform: scale(1.1);
+    }
+    #dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+      font-size: 18px;
+      z-index: 3;
+      text-align: center;
+    }
+    #quizContainer {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 2;
+      width: 300px;
+    }
+    .option {
+      margin-top: 10px;
+      background-color: #e0e0e0;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .option:hover {
+      background-color: #c0ffc0;
+    }
+  </style>
+</head>
+<body>
+  <div id="scoreBoard">分數：0</div>
+  <div id="dialog"></div>
+  <div id="quizContainer"></div>
+
+  <script>
+    let score = 0;
+    let currentLevel = 1;
+    const scoreBoard = document.getElementById('scoreBoard');
+    const dialog = document.getElementById('dialog');
+    const quizContainer = document.getElementById('quizContainer');
+
+    const trashImages = [
+      'images/2.png',
+      'images/3.png',
+      'images/6.png',
+      'images/7.png',
+      'images/8.png',
+    ];
+
+    function setBackground(url) {
+      document.body.style.backgroundImage = `url('${url}')`;
+    }
+
+    function startLevel1() {
+      // ✅ 使用你給的 BG.jpg 本地圖片
+      setBackground('images/BG.jpg'); // 若 BG.jpg 和 index.html 在同一層，改成 setBackground('BG.jpg')
+      dialog.innerText = '友善的環保小尖兵，麻煩你幫我把你所看到的垃圾撿起來(點垃圾)';
+      dialog.style.display = 'block';
+      dialog.onclick = () => {
+        dialog.style.display = 'none';
+        for (let i = 0; i < 5; i++) {
+          createTrash();
+        }
+      };
+    }
+
+    function createTrash() {
+      const img = document.createElement('img');
+      img.src = trashImages[Math.floor(Math.random() * trashImages.length)];
+      img.className = 'trash';
+      img.style.top = Math.random() * (window.innerHeight - 100) + 'px';
+      img.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+      img.onclick = () => {
+        img.remove();
+        score++;
+        scoreBoard.textContent = `分數：${score}`;
+        if (score >= 10 && currentLevel === 1) {
+          dialog.innerHTML = `
+            <div>感謝你為環保盡一份心力，現在我們就去下一關吧！🌱</div>
+            <button id="nextLevelBtn" style="
+              margin-top: 10px;
+              padding: 8px 12px;
+              font-size: 16px;
+              border: none;
+              border-radius: 6px;
+              background-color: #4CAF50;
+              color: white;
+              cursor: pointer;
+            ">前往下一關</button>
+          `;
+          dialog.style.display = 'block';
+          document.getElementById('nextLevelBtn').onclick = () => {
+            window.location.href = 'level2.html';
+          };
+        } else {
+          createTrash();
+        }
+      };
+      document.body.appendChild(img);
+    }
+
+    startLevel1();
+  </script>
+</body>
+</html>

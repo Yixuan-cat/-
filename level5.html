@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>城市選擇：平等3問</title>
+    <style>
+        body { font-family: sans-serif; background: #f2f2f2; padding: 20px; }
+        .game-container { background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; }
+        .event { display: none; }
+        .result { margin-top: 10px; }
+        button { margin-top: 10px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>城市選擇：平等3問</h1>
+        <div id="event1" class="event">
+            <h2>事件一：偏鄉學習資源</h2>
+            <p>原住民小朋友居住偏遠地區，學校資源不足，老師希望政府提供平板與網路。</p>
+            <button onclick="choose(1, 3, '你提供了資源，小朋友能遠距上課，學習進步了。')">提供平板與網路（公平+3）</button><br>
+            <button onclick="choose(1, 1, '你只補助網路，仍有學生無法上課。')">只補助網路（公平+1）</button><br>
+            <button onclick="choose(1, -2, '資源未補足，小朋友繼續缺乏學習管道。')">資源不足，暫不處理（公平-2）</button>
+        </div>
+        <div id="event2" class="event">
+            <h2>事件二：新住民媽媽</h2>
+            <p>新住民媽媽想找工作，但因語言不通與無人照顧孩子而陷入困境。</p>
+            <button onclick="choose(2, 3, '你設立夜間中文班與托育協助，幫助她融入社會。')">提供中文班與托育（公平+3）</button><br>
+            <button onclick="choose(2, 1, '你提供線上中文課，她還是無法外出。')">提供線上課程（公平+1）</button><br>
+            <button onclick="choose(2, -2, '她只能繼續困在家裡，感到無助。')">建議暫時放棄工作（公平-2）</button>
+        </div>
+        <div id="event3" class="event">
+            <h2>事件三：交通平權</h2>
+            <p>身障者抱怨捷運無電梯，請求政府改善無障礙設施。</p>
+            <button onclick="choose(3, 3, '你編列預算改善設施，讓出行更平等。')">改善設施（公平+3）</button><br>
+            <button onclick="choose(3, 1, '你只改善部分站點，不夠全面。')">只改善幾站（公平+1）</button><br>
+            <button onclick="choose(3, -3, '無障礙設施依然不足，他們仍面臨困難。')">目前無預算（公平-3）</button>
+        </div>
+        <div id="summary" class="event">
+            <h2>🎉 遊戲結束</h2>
+            <p id="final-score"></p>
+            <p id="summary-text"></p>
+            <p><strong>恭喜你通關了遊戲！</strong></p>
+        </div>
+    </div>
+
+    <script>
+        let score = 0;
+
+        // 顯示第一個事件
+        document.getElementById('event1').style.display = 'block';
+
+        function choose(eventNum, change, resultText) {
+            score += change;
+            const eventDiv = document.getElementById('event' + eventNum);
+            eventDiv.innerHTML += '<p class="result"><strong>結果：</strong>' + resultText + '</p>';
+
+            setTimeout(() => {
+                eventDiv.style.display = 'none';
+
+                if (eventNum < 3) {
+                    document.getElementById('event' + (eventNum + 1)).style.display = 'block';
+                } else {
+                    document.getElementById('summary').style.display = 'block';
+                    document.getElementById('final-score').innerText = "你的公平指數為：" + score;
+                    
+                    let summary;
+                    if (score >= 7) {
+                        summary = "你是一位非常有同理心與正義感的決策者，為平等努力！";
+                    } else if (score >= 3) {
+                        summary = "你的政策有些幫助，但仍有改善空間。";
+                    } else {
+                        summary = "你的選擇忽略了許多弱勢的需要，請重新思考公平的價值。";
+                    }
+
+                    document.getElementById('summary-text').innerText = summary;
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>第四關：職場平等大作戰</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #ffffff, #cce5ff);
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+    .quiz-container {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem;
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 1.8rem;
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .question-block {
+      margin-bottom: 2rem;
+    }
+    .question {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .option {
+      margin: 0.3rem 0;
+    }
+    .option input {
+      margin-right: 0.5rem;
+    }
+    button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .result {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: #f0f9ff;
+      border-left: 6px solid #2d9cdb;
+      border-radius: 8px;
+      display: none;
+    }
+    .result h2 {
+      color: #2d9cdb;
+      margin-bottom: 1rem;
+    }
+    .correct-answer {
+      color: green;
+      font-weight: bold;
+      display: none;
+      margin-top: 0.5rem;
+    }
+    #next-button {
+      display: none;
+      background-color: #2ecc71;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>第四關：職場平等大作戰</h1>
+    <form id="quiz-form">
+      <div class="question-block">
+        <div class="question">1. 應徵工程師，哪種選項是合理的面試標準？（可複選）</div>
+        <label class="option"><input type="checkbox" name="q1" value="a" />應徵者是否是男性</label>
+        <label class="option"><input type="checkbox" name="q1" value="b" />技術測驗表現</label>
+        <label class="option"><input type="checkbox" name="q1" value="c" />解決問題的能力</label>
+        <div class="correct-answer" id="answer1">正確答案：技術測驗表現、解決問題的能力</div>
+      </div>
+
+      <div class="question-block">
+        <div class="question">2. 公司要升遷主管，哪項考量是不公平的？（可複選）</div>
+        <label class="option"><input type="checkbox" name="q2" value="a" />因為她可能會懷孕而排除</label>
+        <label class="option"><input type="checkbox" name="q2" value="b" />根據她的領導表現</label>
+        <label class="option"><input type="checkbox" name="q2" value="c" />他是男生，比較能服眾</label>
+        <div class="correct-answer" id="answer2">正確答案：因為她可能會懷孕而排除、他是男生比較能服眾</div>
+      </div>
+
+      <div class="question-block">
+        <div class="question">3. 下列哪些是保障職場平等的重要措施？（可複選）</div>
+        <label class="option"><input type="checkbox" name="q3" value="a" />提供彈性育嬰假，不限性別</label>
+        <label class="option"><input type="checkbox" name="q3" value="b" />訂定性騷擾防治制度</label>
+        <label class="option"><input type="checkbox" name="q3" value="c" />只讓女性請育嬰假</label>
+        <div class="correct-answer" id="answer3">正確答案：提供彈性育嬰假、不限性別、訂定性騷擾防治制度</div>
+      </div>
+
+      <div class="question-block">
+        <div class="question">4. 男同事表示想申請育嬰假，公司該怎麼做？（可複選）</div>
+        <label class="option"><input type="checkbox" name="q4" value="a" />支持他的申請，給予同等待遇</label>
+        <label class="option"><input type="checkbox" name="q4" value="b" />鼓勵男性參與家庭照顧</label>
+        <label class="option"><input type="checkbox" name="q4" value="c" />告訴他育嬰是假設女生在請的</label>
+        <div class="correct-answer" id="answer4">正確答案：支持他的申請、鼓勵男性參與家庭照顧</div>
+      </div>
+
+      <div class="question-block">
+        <div class="question">5. 在薪資談判中，哪些做法不公平？（可複選）</div>
+        <label class="option"><input type="checkbox" name="q5" value="a" />因性別給不同起薪</label>
+        <label class="option"><input type="checkbox" name="q5" value="b" />拒絕女性爭取薪資</label>
+        <label class="option"><input type="checkbox" name="q5" value="c" />根據經驗和能力決定薪資</label>
+        <div class="correct-answer" id="answer5">正確答案：因性別給不同起薪、拒絕女性爭取薪資</div>
+      </div>
+
+      <button type="submit">送出答案</button>
+    </form>
+
+    <div class="result" id="result-box">
+      <h2>🎉 結果分析</h2>
+      <p id="result-text"></p>
+      <button id="next-button" onclick="location.href='level5.html'">前往第五關</button>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function () {
+      setTimeout(() => {
+        alert("關於職場平等，你能答對多少？讓我們來挑戰看看吧！");
+      }, 200);
+    };
+
+    document.getElementById("quiz-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      let totalScore = 0;
+      const correctAnswers = {
+        q1: ["b", "c"],
+        q2: ["a", "c"],
+        q3: ["a", "b"],
+        q4: ["a", "b"],
+        q5: ["a", "b"]
+      };
+
+      for (let i = 1; i <= 5; i++) {
+        document.getElementById(`answer${i}`).style.display = "none";
+      }
+
+      for (let i = 1; i <= 5; i++) {
+        const selected = Array.from(document.querySelectorAll(`input[name="q${i}"]:checked`)).map(cb => cb.value);
+        const correct = correctAnswers[`q${i}`];
+        const isCorrect = selected.length === correct.length && selected.every(val => correct.includes(val));
+
+        if (isCorrect) {
+          totalScore += 1;
+        } else if (selected.some(val => correct.includes(val))) {
+          totalScore += 0.5;
+          document.getElementById(`answer${i}`).style.display = "block";
+        } else {
+          document.getElementById(`answer${i}`).style.display = "block";
+        }
+      }
+
+      const resultText = document.getElementById("result-text");
+      let feedback = "";
+
+      if (totalScore >= 4) {
+        feedback = "太棒了！你對職場平等已經有很好的認識，繼續保持這樣的態度！";
+      } else if (totalScore >= 2) {
+        feedback = "不錯哦！你對職場平等有一定的了解，還可以多多學習和關注這個議題。";
+      } else {
+        feedback = "建議你可以再多關注職場平等相關的知識，讓我們一起打造更公平的工作環境！";
+      }
+
+      resultText.innerHTML = `你總共得分：<strong>${totalScore} / 5</strong> 分<br><br>${feedback}`;
+      document.getElementById("result-box").style.display = "block";
+      document.getElementById("next-button").style.display = "inline-block";
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+
+      setTimeout(() => {
+        alert("讓我們前往下一關~");
+      }, 500);
+    });
+  </script>
+</body>
+</html>
